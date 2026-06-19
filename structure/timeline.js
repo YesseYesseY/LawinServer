@@ -2338,6 +2338,35 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    /*
+     * Other s17 stuff
+     *    "CMVE" = MoveToCoral, "CDOPN" = CoralWarmup,  "CWRMDUP" = CoralWarmedUp
+     *    "SMVE" = MoveToSlurp, "SDOPN" = SlurpyWarmup, "SWRMDUP" = SlurpyWarmedUp
+     *    "FMVE" = MoveToFarm,  "FDOPN" = FarmWarmup,   "FWRMDUP" = FarmWarmedUp
+     */
+    if (memory.season == 17) {
+        switch (memory.build)
+        {
+            case 17.30:
+                states[0].activeEvents.push({
+                    "eventType": "ABDSLP",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+                break;
+            case 17.40:
+                states[0].activeEvents.push({
+                    "eventType": "ABDCRL",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            case 17.50:
+                states[0].activeEvents.push({
+                    "eventType": "ABDFRM",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+                break;
+        }
+    }
+
     res.json({
         "channels": {
             "client-matchmaking": {
