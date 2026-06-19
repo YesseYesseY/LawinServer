@@ -2328,6 +2328,16 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    if (memory.season == 13) {
+        // WL7 exists, it just doesn't do anything. Atleast on 13.40. Check Apollo_WaterSetup_C:CheckCalendarWaterLevel
+        if (config.Events.waterLevel >= 0 && config.Events.waterLevel <= 7) {
+            states[0].activeEvents.push({
+                "eventType": `WL${config.Events.waterLevel}`,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+    }
+
     res.json({
         "channels": {
             "client-matchmaking": {
