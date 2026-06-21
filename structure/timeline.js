@@ -2395,6 +2395,15 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    if (memory.build == 26.30) {
+        if (config.Events.ogTeaseStage >= 1 && config.Events.ogTeaseStage <= 3) {
+            states[0].activeEvents.push({
+                "eventType": `TM_0${config.Events.ogTeaseStage}`,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+    }
+
     res.json({
         "channels": {
             "client-matchmaking": {
