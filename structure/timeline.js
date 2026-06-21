@@ -2372,7 +2372,7 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
      *    "SMVE" = MoveToSlurp, "SDOPN" = SlurpyWarmup, "SWRMDUP" = SlurpyWarmedUp
      *    "FMVE" = MoveToFarm,  "FDOPN" = FarmWarmup,   "FWRMDUP" = FarmWarmedUp
      */
-    if (memory.season == 17 && config.Event.bAbductPOI) {
+    if (memory.season == 17 && config.Events.bAbductPOI) {
         switch (memory.build)
         {
             case 17.30:
