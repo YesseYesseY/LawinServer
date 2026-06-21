@@ -2338,13 +2338,41 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    if (memory.season == 14 && config.Events.bEnableGalactus) {
+        states[0].activeEvents.push({
+            "eventType": "SPJ03", // TODO SPJ04
+            "activeUntil": config.Events.galactusArriveDate
+        });
+    }
+
+    // To use progress on portals, switch the 2 in the flag to 1.
+    if (memory.season == 15) {
+        const activePortals = [];
+
+        if (config.Events.bPortalCherry) activePortals.push("CPICK02");
+        if (config.Events.bPortalKepler) activePortals.push("KPICK02");
+        if (config.Events.bPortalMainframe) activePortals.push("MPICK02");
+        if (config.Events.bPortalNightmare) activePortals.push("NPICK02");
+        if (config.Events.bPortalSkirmish) activePortals.push("SKPICK02");
+        if (config.Events.bPortalSmallFry) activePortals.push("SFPICK02");
+        if (config.Events.bPortalTyphoon) activePortals.push("TPICK02");
+        if (config.Events.bPortalWombat) activePortals.push("WPICK02");
+
+        activePortals.forEach(e => {
+            states[0].activeEvents.push({
+                "eventType": e,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        });
+    }
+
     /*
      * Other s17 stuff
      *    "CMVE" = MoveToCoral, "CDOPN" = CoralWarmup,  "CWRMDUP" = CoralWarmedUp
      *    "SMVE" = MoveToSlurp, "SDOPN" = SlurpyWarmup, "SWRMDUP" = SlurpyWarmedUp
      *    "FMVE" = MoveToFarm,  "FDOPN" = FarmWarmup,   "FWRMDUP" = FarmWarmedUp
      */
-    if (memory.season == 17) {
+    if (memory.season == 17 && config.Event.bAbductPOI) {
         switch (memory.build)
         {
             case 17.30:
