@@ -2328,6 +2328,22 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+
+    /*
+     * Other S12 stuff
+     *    "JKD" // Calls AddContentKeysToGameState (does nothing)
+     *    "JLL" // Load event level?
+     *    "JCH01", "JCDCN01", "JCD01" // Stuff in the event scripting
+     */
+    if (memory.season == 12) {
+        if (config.Events.astroSkyPhase == 1 || config.Events.astroSkyPhase == 2) {
+            states[0].activeEvents.push({
+                "eventType": config.Events.astroSkyPhase == 1 ? "JL1" : "JL2",
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+    }
+
     if (memory.season == 13) {
         // WL7 exists, it just doesn't do anything. Atleast on 13.40. Check Apollo_WaterSetup_C:CheckCalendarWaterLevel
         if (config.Events.waterLevel >= 0 && config.Events.waterLevel <= 7) {
