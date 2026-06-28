@@ -2364,11 +2364,28 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
 
         const hatchStage = config.Season12.agencyHatchStage;
-        if (hatchStage == 1 || hatchStage == 2)
-        states[0].activeEvents.push({
-            "eventType": `FHS0${hatchStage}`,
-            "activeUntil": "9999-01-01T00:00:00.000Z"
-        });
+        if (hatchStage == 1 || hatchStage == 2) {
+            states[0].activeEvents.push({
+                "eventType": `FHS0${hatchStage}`,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+
+        const cableStage = config.Season12.cableStage;
+        if (cableStage > 0 && cableStage < 4) {
+            states[0].activeEvents.push({
+                "eventType": `FEC0${cableStage}`,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+
+        const deviceStage = config.Season12.deviceStage;
+        if (deviceStage == 1 || deviceStage == 2) {
+            states[0].activeEvents.push({
+                "eventType": `FLA0${deviceStage}`,
+                "activeUntil": "2020-01-01T00:00:00.000Z"
+            });
+        }
 
         if (memory.build == 12.61 && config.Season12.bEnableWaterStorm) {
             states[0].activeEvents.push({
