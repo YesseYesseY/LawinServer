@@ -2147,6 +2147,8 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         state: stateTemplate
     }]
 
+    let battleBusFlag = "";
+
     if (memory.build == 4.5) {
         if (config.Events.bEnableGeodeEvent == true) {
             states[0].activeEvents.push({
@@ -2328,6 +2330,24 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    if (memory.season == 9) {
+        if (config.Season9.bEnableBirthday) {
+            states[0].activeEvents.push({
+                "eventType": "EventFlag.Anniversary2019_BR",
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+            battleBusFlag = "EventFlag.BirthdayBattleBus2nd";
+        }
+
+        if (config.Season9.bigDuckyStage > 0 && config.Season9.bigDuckyStage < 16)
+        {
+            const flagToUse = config.Season9.bigDuckyStage == 15 ? "14DoSFinalDuckSpot" : `EventFlag.Unvaulting.Day${config.Season9.bigDuckyStage}`;
+            states[0].activeEvents.push({
+                "eventType": flagToUse,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+    }
 
     /*
      * Other S12 stuff
@@ -2418,6 +2438,29 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z"
             });
         }
+    }
+
+    // https://fortnite.fandom.com/wiki/Battle_Bus#Appearance
+    if (!config.BattleBus.bForceDefault) {
+        if (battleBusFlag == "") {
+                 if (memory.build ==  9.41) battleBusFlag = "EventFlag.WorldCupBattleBus"; // Season9.bEnableBirthday = Birthday Bus
+            else if (memory.build >= 12.30 && memory.build < 13.00) battleBusFlag = "EventFlag.DonutBattleBus";
+            else if (memory.build == 14.20) battleBusFlag = "EventFlag.BusUpgrade1"; // TODO Birthday
+            else if (memory.build == 14.30) battleBusFlag = "EventFlag.BusUpgrade1";
+            else if (memory.build == 14.40) battleBusFlag = "EventFlag.HalloweenBattleBus";
+            else if (memory.build == 14.50) battleBusFlag = "EventFlag.BusUpgrade2";
+            else if (memory.build == 14.60) battleBusFlag = "EventFlag.BusUpgrade3";
+            else if (memory.build == 18.00) battleBusFlag = "EventFlag.BirthdayBattleBus4th";
+            else if (memory.build == 18.21) battleBusFlag = "EventFlag.HalloweenBattleBus";
+            else if (memory.build == 18.30) battleBusFlag = "EventFlag.HalloweenBattleBus"; // It get's removed in a content update
+            else if (memory.build == 18.40) battleBusFlag = "EventFlag.HeadbandBus";
+
+        }
+
+        states[0].activeEvents.push({
+            "eventType": battleBusFlag,
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        });
     }
 
     res.json({
