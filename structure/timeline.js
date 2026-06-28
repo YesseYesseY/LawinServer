@@ -2356,9 +2356,23 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
      *    "JCH01", "JCDCN01", "JCD01" // Stuff in the event scripting
      */
     if (memory.season == 12) {
-        if (config.Events.astroSkyPhase == 1 || config.Events.astroSkyPhase == 2) {
+        if (config.Season12.astroSkyPhase == 1 || config.Season12.astroSkyPhase == 2) {
             states[0].activeEvents.push({
-                "eventType": config.Events.astroSkyPhase == 1 ? "JL1" : "JL2",
+                "eventType": config.Season12.astroSkyPhase == 1 ? "JL1" : "JL2",
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+
+        const hatchStage = config.Season12.agencyHatchStage;
+        if (hatchStage == 1 || hatchStage == 2)
+        states[0].activeEvents.push({
+            "eventType": `FHS0${hatchStage}`,
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        });
+
+        if (memory.build == 12.61 && config.Season12.bEnableWaterStorm) {
+            states[0].activeEvents.push({
+                "eventType": "FSGA01",
                 "activeUntil": "9999-01-01T00:00:00.000Z"
             });
         }
