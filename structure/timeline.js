@@ -2330,6 +2330,58 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    // TODO Random block
+    states[0].activeEvents.push({
+        "eventType": "slab1",
+        "activeUntil": "9999-01-01T00:00:00.000Z"
+    });
+
+    /*
+     * Season 7 Stuff
+     * S7_B = Prisoner thing
+     * R1 = ???
+     */
+
+    if (memory.season == 7) {
+        if (config.Season7.bEnableSnowMap) {
+            states[0].activeEvents.push({
+                "eventType": "SP", // SP1 = Melting Snow
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            }, {
+                "eventType": "snowmen", // SP1 = Melting Snow
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+
+        // states[0].activeEvents.push({
+        //     "eventType": "R1",
+        //     "activeUntil": "9999-01-01T00:00:00.000Z"
+        // });
+
+        if (memory.build == 7.30) {
+            if (config.Season7.bEnableFestivusPosters) {
+                states[0].activeEvents.push({
+                    "eventType": "FEST_POSTER",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            const bEnableFestivus = config.Season7.bEnableFestivus;
+            if (config.Season7.bEnableFestivusStage || bEnableFestivus) {
+                states[0].activeEvents.push({
+                    "eventType": "Flevel",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            if (bEnableFestivus) {
+                // "F1" = Starts Event
+                // "F0" = Pre Event Stuff
+                // I can start the event but not load the video. Probably a proton/wine issue tho.
+            }
+        }
+    }
+
     if (memory.season == 9) {
         if (config.Season9.bEnableBirthday) {
             states[0].activeEvents.push({
@@ -2348,22 +2400,25 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
             });
         }
 
-        if (config.Season9.bEnableCattusDoggus) {
-            states[0].activeEvents.push(
-            {
-                "eventType": "CVDL", // Loads DoggusCattus Level
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            },
-            {
-                "eventType": "CVD1", // Event Countdown?
-                "activeSince": "2020-06-29T17:17:00.000Z",
-                "activeUntil": config.Season9.cattusDoggusStartDate
-            },
-            {
-                "eventType": "CVD0", // Start Event
-                "activeUntil": "9999-01-01T00:00:00.000Z",
-                "activeSince": config.Season9.cattusDoggusStartDate
-            });
+        if (memory.build >= 9.40)
+        {
+            if (config.Season9.bEnableCattusDoggus) {
+                states[0].activeEvents.push(
+                {
+                    "eventType": "CVDL", // Loads DoggusCattus Level
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                },
+                {
+                    "eventType": "CVD1", // Event Countdown?
+                    "activeSince": "2020-06-29T17:17:00.000Z",
+                    "activeUntil": config.Season9.cattusDoggusStartDate
+                },
+                {
+                    "eventType": "CVD0", // Start Event
+                    "activeUntil": "9999-01-01T00:00:00.000Z",
+                    "activeSince": config.Season9.cattusDoggusStartDate
+                });
+            }
         }
     }
 
@@ -2445,11 +2500,19 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
             });
         }
 
-        if (memory.build == 12.61 && config.Season12.bEnableWaterStorm) {
-            states[0].activeEvents.push({
-                "eventType": "FSGA01",
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
+        if (memory.build == 12.61) {
+            if (config.Season12.bEnableFritter) {
+                // "FLL01" = Load Event Level
+                // "FCD01" = Pre Event Stuff
+                // "FSCN01" = Start Event
+            }
+
+            if (config.Season12.bEnableWaterStorm) {
+                states[0].activeEvents.push({
+                    "eventType": "FSGA01",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
         }
     }
 
