@@ -2349,24 +2349,44 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
-    if (memory.build == 10.40 && config.Season10.bEnableNightNight) {
-        states[0].activeEvents.push(
-        {
-            "eventType": "survey_stw_ray_switch", // Disables STW/Creative
-            "activeUntil": "9999-01-01T00:00:00.000Z"
-        },
-        {
-            "eventType": "kevin_says_hello", // Disables PLAY Button
-            "activeUntil": "9999-01-01T00:00:00.000Z"
-        },
-        {
-            "eventType": "EventFlag.LobbySeason10_1", // Loads Event Lobby
-            "activeUntil": "9999-01-01T00:00:00.000Z"
-        },
-        {
-            "eventType": "survey_br_nick_001", // Starts Event
-            "activeUntil": "9999-01-01T00:00:00.000Z"
-        });
+    if (memory.build == 10.40) {
+        if (config.Season10.bEnableNightNightEvent) {
+            states[0].activeEvents.push(
+            {
+                "eventType": "NNL", // Loads NightNightSequenceMap
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            },
+            {
+                "eventType": "NN1", // Event Countdown
+                "activeSince": "2020-06-29T17:17:00.000Z",
+                "activeUntil": config.Season10.eventNightNightStartDate
+            },
+            {
+                "eventType": "NN0", // Starts Event
+                "activeSince": config.Season10.eventNightNightStartDate,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+
+        if (config.Season10.bEnableNightNight) {
+            states[0].activeEvents.push(
+            {
+                "eventType": "survey_stw_ray_switch", // Disables STW/Creative
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            },
+            {
+                "eventType": "kevin_says_hello", // Disables PLAY Button
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            },
+            {
+                "eventType": "EventFlag.LobbySeason10_1", // Loads Event Lobby
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            },
+            {
+                "eventType": "survey_br_nick_001", // Starts Event
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
     }
 
     /*
