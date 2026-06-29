@@ -2349,6 +2349,26 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    if (memory.build == 10.40 && config.Season10.bEnableNightNight) {
+        states[0].activeEvents.push(
+        {
+            "eventType": "survey_stw_ray_switch", // Disables STW/Creative
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        },
+        {
+            "eventType": "kevin_says_hello", // Disables PLAY Button
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        },
+        {
+            "eventType": "EventFlag.LobbySeason10_1", // Loads Event Lobby
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        },
+        {
+            "eventType": "survey_br_nick_001", // Starts Event
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        });
+    }
+
     /*
      * Other S12 stuff
      *    "JKD" // Calls AddContentKeysToGameState (does nothing)
@@ -2410,6 +2430,13 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
             "eventType": "SPJ03", // TODO SPJ04
             "activeUntil": config.Events.galactusArriveDate
         });
+
+        if (memory.build == 14.60) {
+            states[0].activeEvents.push({
+                "eventType": "BBMS3", // Idk if there is a BBMS2/1, 14.60 doesn't have it and my drive is getting too full of builds to check others
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
     }
 
     // To use progress on portals, switch the 2 in the flag to 1.
@@ -2488,10 +2515,12 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
 
         }
 
-        states[0].activeEvents.push({
-            "eventType": battleBusFlag,
-            "activeUntil": "9999-01-01T00:00:00.000Z"
-        });
+        if (battleBusFlag != "") {
+            states[0].activeEvents.push({
+                "eventType": battleBusFlag,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
     }
 
     res.json({
