@@ -2347,6 +2347,24 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z"
             });
         }
+
+        if (config.Season9.bEnableCattusDoggus) {
+            states[0].activeEvents.push(
+            {
+                "eventType": "CVDL", // Loads DoggusCattus Level
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            },
+            {
+                "eventType": "CVD1", // Event Countdown?
+                "activeSince": "2020-06-29T17:17:00.000Z",
+                "activeUntil": config.Season9.cattusDoggusStartDate
+            },
+            {
+                "eventType": "CVD0", // Start Event
+                "activeUntil": "9999-01-01T00:00:00.000Z",
+                "activeSince": config.Season9.cattusDoggusStartDate
+            });
+        }
     }
 
     if (memory.build == 10.40) {
