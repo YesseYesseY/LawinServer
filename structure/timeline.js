@@ -2422,6 +2422,16 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
+    if (memory.build >= 10.20) {
+        // TODO Progress config for the island
+        if (config.Season10.bEnableFloatingIsland) {
+            states[0].activeEvents.push({
+                "eventType": "RBFI",
+                "activeUntil": "2028-06-29T17:17:00.000Z",
+            });
+        }
+    }
+
     if (memory.build == 10.40) {
         if (config.Season10.bEnableNightNightEvent) {
             states[0].activeEvents.push(
@@ -2469,11 +2479,35 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
      *    "JCH01", "JCDCN01", "JCD01" // Stuff in the event scripting
      */
     if (memory.season == 12) {
-        if (config.Season12.astroSkyPhase == 1 || config.Season12.astroSkyPhase == 2) {
-            states[0].activeEvents.push({
-                "eventType": config.Season12.astroSkyPhase == 1 ? "JL1" : "JL2",
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
+        if (memory.build == 12.41) {
+            if (config.Season12.astroSkyPhase == 1 || config.Season12.astroSkyPhase == 2) {
+                states[0].activeEvents.push({
+                    "eventType": config.Season12.astroSkyPhase == 1 ? "JL1" : "JL2",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            if (config.Season12.bEnableJerkyHeads) {
+                states[0].activeEvents.push({
+                    "eventType": "JH01",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            if (config.Season12.bEnableJerkyPosters) {
+                states[0].activeEvents.push({
+                    "eventType": "JP01",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            const jerkyStageStage = config.Season12.jerkyStageConstructionStage;
+            if (jerkyStageStage >= 1 && jerkyStageStage <= 3) { // jerkyStageStage sounds weird
+                states[0].activeEvents.push({
+                    "eventType": `JS0${jerkyStageStage}`,
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
         }
 
         const hatchStage = config.Season12.agencyHatchStage;
