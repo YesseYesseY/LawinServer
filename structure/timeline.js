@@ -10,6 +10,12 @@ function dateOffsetMinutes(timestamp, minutes) {
     return new Date(new Date(timestamp).getTime() + 60000 * minutes).toISOString();
 }
 
+function dateNow() {
+    return new Date().toISOString();
+}
+
+let battleBusFlag = "";
+
 express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
     const memory = functions.GetVersionInfo(req);
 
@@ -119,14 +125,6 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
-            if (memory.build == 5.10) {
-                activeEvents.push(
-                {
-                    "eventType": "EventFlag.BirthdayBattleBus",
-                    "activeUntil": "9999-01-01T00:00:00.000Z",
-                    "activeSince": "2020-01-01T00:00:00.000Z"
-                })
-            }
             break;
 
         case 6:
@@ -173,11 +171,6 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                     "eventType": "EventFlag.LobbySeason6Halloween",
                     "activeUntil": "9999-01-01T00:00:00.000Z",
                     "activeSince": "2020-01-01T00:00:00.000Z"
-                },
-                {
-                    "eventType": "EventFlag.HalloweenBattleBus",
-                    "activeUntil": "9999-01-01T00:00:00.000Z",
-                    "activeSince": "2020-01-01T00:00:00.000Z"
                 })
             }
             break;
@@ -209,6 +202,32 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
+            if (config.Season7.bEnableSnowMap) {
+                activeEvents.push({
+                    "eventType": "SP", // SP1 = Snow map melting based on event flag progress
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                }, {
+                    "eventType": "snowmen",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            if (memory.build == 7.30) {
+                if (config.Season7.bEnableFestivusPosters) {
+                    activeEvents.push({
+                        "eventType": "FEST_POSTER",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+
+                if (config.Season7.bEnableFestivusStage || config.Season7.bEnableFestivus) {
+                    activeEvents.push({
+                        "eventType": "Flevel",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+            }
             break;
 
         case 8:
@@ -280,6 +299,7 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
             if (memory.build >= 9.2) {
                 activeEvents.push(
                 {
@@ -287,6 +307,26 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                     "activeUntil": "9999-01-01T00:00:00.000Z",
                     "activeSince": "2020-01-01T00:00:00.000Z"
                 })
+            }
+
+            if (memory.build >= 9.40) {
+                if (config.Season9.bEnableBirthday) {
+                    activeEvents.push({
+                        "eventType": "EventFlag.Anniversary2019_BR",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                    battleBusFlag = "EventFlag.BirthdayBattleBus2nd";
+                }
+            }
+
+            // TODO Switch this to bEnable14DaysOfSummer
+            if (config.Season9.bigDuckyStage > 0 && config.Season9.bigDuckyStage < 16)
+            {
+                const flagToUse = config.Season9.bigDuckyStage == 15 ? "14DoSFinalDuckSpot" : `EventFlag.Unvaulting.Day${config.Season9.bigDuckyStage}`;
+                activeEvents.push({
+                    "eventType": flagToUse,
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
             }
             break;
 
@@ -372,6 +412,14 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
+            if (memory.build >= 10.20) {
+                activeEvents.push({
+                    "eventType": "RBFI", // Floating Island
+                    "activeSince": config.Season10.floatingIslandStartDate,
+                    "activeUntil": config.Season10.floatingIslandEndDate
+                });
+            }
             break;
 
         case 11:
@@ -515,6 +563,87 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
+            if (memory.build == 12.41) {
+                if (config.Season12.astroSkyPhase == 1 || config.Season12.astroSkyPhase == 2) {
+                    activeEvents.push({
+                        "eventType": config.Season12.astroSkyPhase == 1 ? "JL1" : "JL2",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+
+                if (config.Season12.bEnableJerkyHeads) {
+                    activeEvents.push({
+                        "eventType": "JH01",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+
+                if (config.Season12.bEnableJerkyPosters) {
+                    activeEvents.push({
+                        "eventType": "JP01",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+
+                const jerkyStageStage = config.Season12.jerkyStageConstructionStage;
+                if (jerkyStageStage >= 1 && jerkyStageStage <= 3) { // jerkyStageStage sounds weird
+                    activeEvents.push({
+                        "eventType": `JS0${jerkyStageStage}`,
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+            }
+
+            /*
+             * Other S12 stuff
+             *    "JKD" // Calls AddContentKeysToGameState (does nothing)
+             *    "JLL" // Load event level?
+             *    "JCH01", "JCDCN01", "JCD01" // Stuff in the event scripting
+             */
+            if (memory.build >= 12.60) {
+                const hatchStage = config.Season12.agencyHatchStage;
+                if (hatchStage == 1 || hatchStage == 2) {
+                    activeEvents.push({
+                        "eventType": `FHS0${hatchStage}`,
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+
+                const cableStage = config.Season12.cableStage;
+                if (cableStage > 0 && cableStage < 4) {
+                    activeEvents.push({
+                        "eventType": `FEC0${cableStage}`,
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+
+                const deviceStage = config.Season12.deviceStage;
+                if (deviceStage == 1 || deviceStage == 2) {
+                    activeEvents.push({
+                        "eventType": `FLA0${deviceStage}`,
+                        "activeUntil": "2020-01-01T00:00:00.000Z"
+                    });
+                }
+            }
+
+            if (memory.build == 12.61) {
+                if (config.Season12.bEnableWaterStorm) {
+                    activeEvents.push({
+                        "eventType": "FSGA01",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+            }
+            break;
+        case 13:
+            // WL7 exists, it just doesn't do anything. Atleast on 13.40. Check Apollo_WaterSetup_C:CheckCalendarWaterLevel
+            if (config.Events.waterLevel >= 0 && config.Events.waterLevel <= 7) {
+                activeEvents.push({
+                    "eventType": `WL${config.Events.waterLevel}`,
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
             break;
 
         case 14:
@@ -618,6 +747,25 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
+            // To use progress on portals, switch the 2 in the flag to 1.
+            const activePortals = [];
+
+            if (config.Season15.bPortalCherry) activePortals.push("CPICK02");
+            if (config.Season15.bPortalKepler) activePortals.push("KPICK02");
+            if (config.Season15.bPortalMainframe) activePortals.push("MPICK02");
+            if (config.Season15.bPortalNightmare) activePortals.push("NPICK02");
+            if (config.Season15.bPortalSkirmish) activePortals.push("SKPICK02");
+            if (config.Season15.bPortalSmallFry) activePortals.push("SFPICK02");
+            if (config.Season15.bPortalTyphoon) activePortals.push("TPICK02");
+            if (config.Season15.bPortalWombat) activePortals.push("WPICK02");
+
+            activePortals.forEach(e => {
+                activeEvents.push({
+                    "eventType": e,
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            });
             break;
 
         case 16:
@@ -831,6 +979,44 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
+            /*
+             * Other s17 stuff
+             *    "CMVE" = MoveToCoral, "CDOPN" = CoralWarmup,  "CWRMDUP" = CoralWarmedUp
+             *    "SMVE" = MoveToSlurp, "SDOPN" = SlurpyWarmup, "SWRMDUP" = SlurpyWarmedUp
+             *    "FMVE" = MoveToFarm,  "FDOPN" = FarmWarmup,   "FWRMDUP" = FarmWarmedUp
+             *    "BPLS" = UFO Center of map for Rift Tour
+             */
+            if (memory.build >= 17.20 && config.Season17.bEnableForayVehicle) {
+                activeEvents.push({
+                    "eventType": "FWCS",
+                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                });
+            }
+
+            if (config.Season17.bAbductPOI) {
+                switch (memory.build)
+                {
+                    case 17.30:
+                        activeEvents.push({
+                            "eventType": "ABDSLP",
+                            "activeUntil": "9999-01-01T00:00:00.000Z"
+                        });
+                        break;
+                    case 17.40:
+                        activeEvents.push({
+                            "eventType": "ABDCRL",
+                            "activeUntil": "9999-01-01T00:00:00.000Z"
+                        });
+                    case 17.50:
+                        activeEvents.push({
+                            "eventType": "ABDFRM",
+                            "activeUntil": "9999-01-01T00:00:00.000Z"
+                        });
+                        break;
+                }
+            }
+
             break;
 
         case 18:
@@ -1453,6 +1639,16 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 "activeUntil": "9999-01-01T00:00:00.000Z",
                 "activeSince": "2020-01-01T00:00:00.000Z"
             })
+
+
+            if (memory.build == 26.30) {
+                if (config.Events.ogTeaseStage >= 1 && config.Events.ogTeaseStage <= 3) {
+                    activeEvents.push({
+                        "eventType": `TM_0${config.Events.ogTeaseStage}`,
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                }
+            }
             break;
 
         case 27:
@@ -2013,6 +2209,14 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
             })
     }
 
+    // TODO Random block
+    if (memory.build >= 7.10 && memory.season < 11) {
+        activeEvents.push({
+            "eventType": "slab1",
+            "activeUntil": "9999-01-01T00:00:00.000Z"
+        });
+    }
+
     if (24.3 <= memory.build && memory.build <= 25) {
         activeEvents.push(
         {
@@ -2127,6 +2331,34 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         });
     }
 
+    // https://fortnite.fandom.com/wiki/Battle_Bus#Appearance
+    if (!config.BattleBus.bForceDefault) {
+        if (battleBusFlag == "") {
+                 if (memory.build ==  5.10) battleBusFlag = "EventFlag.BirthdayBattleBus";
+            else if (memory.build ==  6.20) battleBusFlag = "EventFlag.HalloweenBattleBus";
+            else if (memory.build ==  6.21) battleBusFlag = "EventFlag.HalloweenBattleBus";
+            else if (memory.build ==  9.41) battleBusFlag = "EventFlag.WorldCupBattleBus"; // Season9.bEnableBirthday = Birthday Bus
+            else if (memory.build >= 12.30 && memory.build < 13.00) battleBusFlag = "EventFlag.DonutBattleBus";
+            else if (memory.build == 14.20) battleBusFlag = "EventFlag.BusUpgrade1"; // TODO Birthday
+            else if (memory.build == 14.30) battleBusFlag = "EventFlag.BusUpgrade1";
+            else if (memory.build == 14.40) battleBusFlag = "EventFlag.HalloweenBattleBus";
+            else if (memory.build == 14.50) battleBusFlag = "EventFlag.BusUpgrade2";
+            else if (memory.build == 14.60) battleBusFlag = "EventFlag.BusUpgrade3";
+            else if (memory.build == 18.00) battleBusFlag = "EventFlag.BirthdayBattleBus4th";
+            else if (memory.build == 18.21) battleBusFlag = "EventFlag.HalloweenBattleBus";
+            else if (memory.build == 18.30) battleBusFlag = "EventFlag.HalloweenBattleBus"; // It get's removed in a content update
+            else if (memory.build == 18.40) battleBusFlag = "EventFlag.HeadbandBus";
+
+        }
+
+        if (battleBusFlag != "") {
+            activeEvents.push({
+                "eventType": battleBusFlag,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+    }
+
     const stateTemplate = {
         "activeStorefronts": [],
         "eventNamedWeights": {},
@@ -2150,8 +2382,6 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         activeEvents: activeEvents.slice(),
         state: stateTemplate
     }]
-
-    let battleBusFlag = "";
 
     if (memory.build == 4.5) {
         if (config.Events.bEnableGeodeEvent == true) {
@@ -2334,117 +2564,61 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
-    // TODO Random block
-    states[0].activeEvents.push({
-        "eventType": "slab1",
-        "activeUntil": "9999-01-01T00:00:00.000Z"
-    });
-
     /*
      * Season 7 Stuff
      * S7_B = Prisoner thing
      * R1 = ???
      */
 
-    if (memory.season == 7) {
-        if (config.Season7.bEnableSnowMap) {
-            states[0].activeEvents.push({
-                "eventType": "SP", // SP1 = Melting Snow
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            }, {
-                "eventType": "snowmen", // SP1 = Melting Snow
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-
-        // states[0].activeEvents.push({
-        //     "eventType": "R1",
-        //     "activeUntil": "9999-01-01T00:00:00.000Z"
-        // });
-
-        if (memory.build == 7.30) {
-            if (config.Season7.bEnableFestivusPosters) {
-                states[0].activeEvents.push({
-                    "eventType": "FEST_POSTER",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
-
-            const bEnableFestivus = config.Season7.bEnableFestivus;
-            if (config.Season7.bEnableFestivusStage || bEnableFestivus) {
-                states[0].activeEvents.push({
-                    "eventType": "Flevel",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
-
-            if (bEnableFestivus) {
-                // "F1" = Starts Event
-                // "F0" = Pre Event Stuff
-                // I can start the event but not load the video. Probably a proton/wine issue tho.
-            }
+    if (memory.build == 7.30) {
+        if (config.Season7.bEnableFestivus) {
+            // "F1" = Starts Event
+            // "F0" = Pre Event Stuff
+            // I can start the event but not load the video. Probably a proton/wine issue tho.
         }
     }
 
-    if (memory.season == 9) {
-        if (config.Season9.bEnableBirthday) {
-            states[0].activeEvents.push({
-                "eventType": "EventFlag.Anniversary2019_BR",
-                "activeUntil": "9999-01-01T00:00:00.000Z"
+    if (memory.build == 9.40 || memory.build == 9.41) {
+        if (config.Season9.bEnableCattusDoggus) {
+            const eventStartDate = config.Season9.cattusDoggusStartDate;
+            const eventEndDate = dateOffsetMinutes(eventStartDate, 5);
+
+            states[0].activeEvents.push(
+            {
+                "eventType": "CVDL", // Loads DoggusCattus Level NOTE: Pretty sure CVD1 also loads the level
+                "activeUntil": eventEndDate
+            },
+            {
+                "eventType": "CVD1", // Pre-Event stuff (Platforms, Invincibility, TODM, etc.)
+                "activeUntil": eventEndDate
+            },
+            {
+                "eventType": "CDTime", // Countdown
+                "activeUntil": eventStartDate
             });
-            battleBusFlag = "EventFlag.BirthdayBattleBus2nd";
-        }
 
-        if (config.Season9.bigDuckyStage > 0 && config.Season9.bigDuckyStage < 16)
-        {
-            const flagToUse = config.Season9.bigDuckyStage == 15 ? "14DoSFinalDuckSpot" : `EventFlag.Unvaulting.Day${config.Season9.bigDuckyStage}`;
-            states[0].activeEvents.push({
-                "eventType": flagToUse,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
+            states.push({
+                validFrom: eventStartDate,
+                activeEvents: activeEvents.slice(),
+                state: stateTemplate
+            })
+
+            states[1].activeEvents.push({
+                "eventType": "CVD0", // Start Event
+                "activeSince": eventStartDate,
+                "activeUntil": eventEndDate
             });
-        }
 
-        if (memory.build >= 9.40)
-        {
-            if (config.Season9.bEnableCattusDoggus) {
-                const eventStartDate = config.Season9.cattusDoggusStartDate;
-                const eventEndDate = dateOffsetMinutes(eventStartDate, 5);
+            states.push({
+                validFrom: eventEndDate,
+                activeEvents: activeEvents.slice(),
+                state: stateTemplate
+            })
 
-                states[0].activeEvents.push(
-                {
-                    "eventType": "CVDL", // Loads DoggusCattus Level
-                    "activeUntil": eventEndDate
-                },
-                {
-                    "eventType": "CVD1", // Enable Floating Platforms
-                    "activeUntil": eventEndDate
-                },
-                {
-                    "eventType": "CDTime", // Countdown
-                    "activeUntil": eventStartDate
-                });
-
-                states.push({
-                    validFrom: eventStartDate,
-                    activeEvents: activeEvents.slice(),
-                    state: stateTemplate
-                })
-
-                states[1].activeEvents.push({
-                    "eventType": "CVD0", // Start Event
-                    "activeSince": eventStartDate,
-                    "activeUntil": eventEndDate
-                });
-            }
-        }
-    }
-
-    if (memory.build >= 10.20) {
-        // TODO Progress config for the island
-        if (config.Season10.bEnableFloatingIsland) {
-            states[0].activeEvents.push({
-                "eventType": "RBFI",
-                "activeUntil": "2028-06-29T17:17:00.000Z",
+            states[2].activeEvents.push({
+                "eventType": "PCVD", // Post event stuff (Skelton, Zero Point, No Doggus Construction)
+                "activeSince": eventEndDate,
+                "activeUntil": dateOffsetMinutes(eventEndDate, 60 * 24 * 12) // 12 days between CattusDoggus and S10
             });
         }
     }
@@ -2468,7 +2642,7 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
             });
         }
 
-        if (config.Season10.bEnableNightNight) {
+        if (config.Season10.bEnableNightNightLobbyEvent) {
             states[0].activeEvents.push(
             {
                 "eventType": "survey_stw_ray_switch", // Disables STW/Creative
@@ -2489,94 +2663,15 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         }
     }
 
-    /*
-     * Other S12 stuff
-     *    "JKD" // Calls AddContentKeysToGameState (does nothing)
-     *    "JLL" // Load event level?
-     *    "JCH01", "JCDCN01", "JCD01" // Stuff in the event scripting
-     */
-    if (memory.season == 12) {
-        if (memory.build == 12.41) {
-            if (config.Season12.astroSkyPhase == 1 || config.Season12.astroSkyPhase == 2) {
-                states[0].activeEvents.push({
-                    "eventType": config.Season12.astroSkyPhase == 1 ? "JL1" : "JL2",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
-
-            if (config.Season12.bEnableJerkyHeads) {
-                states[0].activeEvents.push({
-                    "eventType": "JH01",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
-
-            if (config.Season12.bEnableJerkyPosters) {
-                states[0].activeEvents.push({
-                    "eventType": "JP01",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
-
-            const jerkyStageStage = config.Season12.jerkyStageConstructionStage;
-            if (jerkyStageStage >= 1 && jerkyStageStage <= 3) { // jerkyStageStage sounds weird
-                states[0].activeEvents.push({
-                    "eventType": `JS0${jerkyStageStage}`,
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
-        }
-
-        const hatchStage = config.Season12.agencyHatchStage;
-        if (hatchStage == 1 || hatchStage == 2) {
-            states[0].activeEvents.push({
-                "eventType": `FHS0${hatchStage}`,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-
-        const cableStage = config.Season12.cableStage;
-        if (cableStage > 0 && cableStage < 4) {
-            states[0].activeEvents.push({
-                "eventType": `FEC0${cableStage}`,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-
-        const deviceStage = config.Season12.deviceStage;
-        if (deviceStage == 1 || deviceStage == 2) {
-            states[0].activeEvents.push({
-                "eventType": `FLA0${deviceStage}`,
-                "activeUntil": "2020-01-01T00:00:00.000Z"
-            });
-        }
-
-        if (memory.build == 12.61) {
-            if (config.Season12.bEnableFritter) {
-                // "FLL01" = Load Event Level
-                // "FCD01" = Pre Event Stuff
-                // "FSCN01" = Start Event
-            }
-
-            if (config.Season12.bEnableWaterStorm) {
-                states[0].activeEvents.push({
-                    "eventType": "FSGA01",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            }
+    if (memory.build == 12.61) {
+        if (config.Season12.bEnableFritter) {
+            // "FLL01" = Load Event Level
+            // "FCD01" = Pre Event Stuff
+            // "FSCN01" = Start Event
         }
     }
 
-    if (memory.season == 13) {
-        // WL7 exists, it just doesn't do anything. Atleast on 13.40. Check Apollo_WaterSetup_C:CheckCalendarWaterLevel
-        if (config.Events.waterLevel >= 0 && config.Events.waterLevel <= 7) {
-            states[0].activeEvents.push({
-                "eventType": `WL${config.Events.waterLevel}`,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-    }
-
+    // TODO Move this
     if (memory.season == 14 && config.Events.bEnableGalactus) {
         states[0].activeEvents.push({
             "eventType": "SPJ03", // TODO SPJ04
@@ -2586,100 +2681,6 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         if (memory.build == 14.60) {
             states[0].activeEvents.push({
                 "eventType": "BBMS3", // Idk if there is a BBMS2/1, 14.60 doesn't have it and my drive is getting too full of builds to check others
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-    }
-
-    // To use progress on portals, switch the 2 in the flag to 1.
-    if (memory.season == 15) {
-        const activePortals = [];
-
-        if (config.Events.bPortalCherry) activePortals.push("CPICK02");
-        if (config.Events.bPortalKepler) activePortals.push("KPICK02");
-        if (config.Events.bPortalMainframe) activePortals.push("MPICK02");
-        if (config.Events.bPortalNightmare) activePortals.push("NPICK02");
-        if (config.Events.bPortalSkirmish) activePortals.push("SKPICK02");
-        if (config.Events.bPortalSmallFry) activePortals.push("SFPICK02");
-        if (config.Events.bPortalTyphoon) activePortals.push("TPICK02");
-        if (config.Events.bPortalWombat) activePortals.push("WPICK02");
-
-        activePortals.forEach(e => {
-            states[0].activeEvents.push({
-                "eventType": e,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        });
-    }
-
-    /*
-     * Other s17 stuff
-     *    "CMVE" = MoveToCoral, "CDOPN" = CoralWarmup,  "CWRMDUP" = CoralWarmedUp
-     *    "SMVE" = MoveToSlurp, "SDOPN" = SlurpyWarmup, "SWRMDUP" = SlurpyWarmedUp
-     *    "FMVE" = MoveToFarm,  "FDOPN" = FarmWarmup,   "FWRMDUP" = FarmWarmedUp
-     *    "BPLS" = UFO Center of map for Rift Tour
-     */
-    if (memory.season == 17) {
-        if (memory.build >= 17.20 && config.Season17.bEnableForayVehicle) {
-            states[0].activeEvents.push({
-                "eventType": "FWCS",
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-
-        if (config.Season17.bAbductPOI) {
-            switch (memory.build)
-            {
-                case 17.30:
-                    states[0].activeEvents.push({
-                        "eventType": "ABDSLP",
-                        "activeUntil": "9999-01-01T00:00:00.000Z"
-                    });
-                    break;
-                case 17.40:
-                    states[0].activeEvents.push({
-                        "eventType": "ABDCRL",
-                        "activeUntil": "9999-01-01T00:00:00.000Z"
-                    });
-                case 17.50:
-                    states[0].activeEvents.push({
-                        "eventType": "ABDFRM",
-                        "activeUntil": "9999-01-01T00:00:00.000Z"
-                    });
-                    break;
-            }
-        }
-    }
-
-    if (memory.build == 26.30) {
-        if (config.Events.ogTeaseStage >= 1 && config.Events.ogTeaseStage <= 3) {
-            states[0].activeEvents.push({
-                "eventType": `TM_0${config.Events.ogTeaseStage}`,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-    }
-
-    // https://fortnite.fandom.com/wiki/Battle_Bus#Appearance
-    if (!config.BattleBus.bForceDefault) {
-        if (battleBusFlag == "") {
-                 if (memory.build ==  9.41) battleBusFlag = "EventFlag.WorldCupBattleBus"; // Season9.bEnableBirthday = Birthday Bus
-            else if (memory.build >= 12.30 && memory.build < 13.00) battleBusFlag = "EventFlag.DonutBattleBus";
-            else if (memory.build == 14.20) battleBusFlag = "EventFlag.BusUpgrade1"; // TODO Birthday
-            else if (memory.build == 14.30) battleBusFlag = "EventFlag.BusUpgrade1";
-            else if (memory.build == 14.40) battleBusFlag = "EventFlag.HalloweenBattleBus";
-            else if (memory.build == 14.50) battleBusFlag = "EventFlag.BusUpgrade2";
-            else if (memory.build == 14.60) battleBusFlag = "EventFlag.BusUpgrade3";
-            else if (memory.build == 18.00) battleBusFlag = "EventFlag.BirthdayBattleBus4th";
-            else if (memory.build == 18.21) battleBusFlag = "EventFlag.HalloweenBattleBus";
-            else if (memory.build == 18.30) battleBusFlag = "EventFlag.HalloweenBattleBus"; // It get's removed in a content update
-            else if (memory.build == 18.40) battleBusFlag = "EventFlag.HeadbandBus";
-
-        }
-
-        if (battleBusFlag != "") {
-            states[0].activeEvents.push({
-                "eventType": battleBusFlag,
                 "activeUntil": "9999-01-01T00:00:00.000Z"
             });
         }
