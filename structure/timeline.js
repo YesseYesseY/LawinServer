@@ -2600,27 +2600,37 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
      *    "CMVE" = MoveToCoral, "CDOPN" = CoralWarmup,  "CWRMDUP" = CoralWarmedUp
      *    "SMVE" = MoveToSlurp, "SDOPN" = SlurpyWarmup, "SWRMDUP" = SlurpyWarmedUp
      *    "FMVE" = MoveToFarm,  "FDOPN" = FarmWarmup,   "FWRMDUP" = FarmWarmedUp
+     *    "BPLS" = UFO Center of map for Rift Tour
      */
-    if (memory.season == 17 && config.Events.bAbductPOI) {
-        switch (memory.build)
-        {
-            case 17.30:
-                states[0].activeEvents.push({
-                    "eventType": "ABDSLP",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-                break;
-            case 17.40:
-                states[0].activeEvents.push({
-                    "eventType": "ABDCRL",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-            case 17.50:
-                states[0].activeEvents.push({
-                    "eventType": "ABDFRM",
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
-                });
-                break;
+    if (memory.season == 17) {
+        if (memory.build >= 17.20 && config.Season17.bEnableForayVehicle) {
+            states[0].activeEvents.push({
+                "eventType": "FWCS",
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+        }
+
+        if (config.Season17.bAbductPOI) {
+            switch (memory.build)
+            {
+                case 17.30:
+                    states[0].activeEvents.push({
+                        "eventType": "ABDSLP",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                    break;
+                case 17.40:
+                    states[0].activeEvents.push({
+                        "eventType": "ABDCRL",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                case 17.50:
+                    states[0].activeEvents.push({
+                        "eventType": "ABDFRM",
+                        "activeUntil": "9999-01-01T00:00:00.000Z"
+                    });
+                    break;
+            }
         }
     }
 
