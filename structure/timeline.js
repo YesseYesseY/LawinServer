@@ -6,6 +6,10 @@ const path = require("path");
 const iniparser = require("ini");
 const config = iniparser.parse(fs.readFileSync(path.join(__dirname, "..", "Config", "config.ini")).toString());
 
+function dateOffsetMinutes(timestamp, minutes) {
+    return new Date(new Date(timestamp).getTime() + 60000 * minutes).toISOString();
+}
+
 express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
     const memory = functions.GetVersionInfo(req);
 
@@ -2403,20 +2407,33 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
         if (memory.build >= 9.40)
         {
             if (config.Season9.bEnableCattusDoggus) {
+                const eventStartDate = config.Season9.cattusDoggusStartDate;
+                const eventEndDate = dateOffsetMinutes(eventStartDate, 5);
+
                 states[0].activeEvents.push(
                 {
                     "eventType": "CVDL", // Loads DoggusCattus Level
-                    "activeUntil": "9999-01-01T00:00:00.000Z"
+                    "activeUntil": eventEndDate
                 },
                 {
-                    "eventType": "CVD1", // Event Countdown?
-                    "activeSince": "2020-06-29T17:17:00.000Z",
-                    "activeUntil": config.Season9.cattusDoggusStartDate
+                    "eventType": "CVD1", // Enable Floating Platforms
+                    "activeUntil": eventEndDate
                 },
                 {
+                    "eventType": "CDTime", // Countdown
+                    "activeUntil": eventStartDate
+                });
+
+                states.push({
+                    validFrom: eventStartDate,
+                    activeEvents: activeEvents.slice(),
+                    state: stateTemplate
+                })
+
+                states[1].activeEvents.push({
                     "eventType": "CVD0", // Start Event
-                    "activeUntil": "9999-01-01T00:00:00.000Z",
-                    "activeSince": config.Season9.cattusDoggusStartDate
+                    "activeSince": eventStartDate,
+                    "activeUntil": eventEndDate
                 });
             }
         }
