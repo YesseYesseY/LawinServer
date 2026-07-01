@@ -420,6 +420,16 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                     "activeUntil": config.Season10.floatingIslandEndDate
                 });
             }
+
+            if (memory.build == 10.40) {
+                if (config.Season10.bEnableNightNightEvent) {
+                    activeEvents.push({
+                        "eventType": "EventFlag.LobbySeason10_1",
+                        "activeUntil": "9999-01-01T00:00:00.000Z",
+                        "activeSince": "2020-01-01T00:00:00.000Z"
+                    });
+                }
+            }
             break;
 
         case 11:
@@ -2601,7 +2611,7 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 validFrom: eventStartDate,
                 activeEvents: activeEvents.slice(),
                 state: stateTemplate
-            })
+            });
 
             states[1].activeEvents.push({
                 "eventType": "CVD0", // Start Event
@@ -2613,7 +2623,7 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
                 validFrom: eventEndDate,
                 activeEvents: activeEvents.slice(),
                 state: stateTemplate
-            })
+            });
 
             states[2].activeEvents.push({
                 "eventType": "PCVD", // Post event stuff (Skelton, Zero Point, No Doggus Construction)
@@ -2625,6 +2635,8 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
 
     if (memory.build == 10.40) {
         if (config.Season10.bEnableNightNightEvent) {
+            const eventStartDate = config.Season10.eventNightNightStartDate;
+            const eventEndDate = dateOffsetMinutes(eventStartDate, 5);
             states[0].activeEvents.push(
             {
                 "eventType": "NNL", // Loads NightNightSequenceMap
@@ -2632,33 +2644,45 @@ express.get("/fortnite/api/calendar/v1/timeline", async (req, res) => {
             },
             {
                 "eventType": "NN1", // Event Countdown
-                "activeSince": "2020-06-29T17:17:00.000Z",
-                "activeUntil": config.Season10.eventNightNightStartDate
+                "activeUntil": eventStartDate
             },
-            {
-                "eventType": "NN0", // Starts Event
-                "activeSince": config.Season10.eventNightNightStartDate,
-                "activeUntil": "9999-01-01T00:00:00.000Z"
-            });
-        }
-
-        if (config.Season10.bEnableNightNightLobbyEvent) {
-            states[0].activeEvents.push(
             {
                 "eventType": "survey_stw_ray_switch", // Disables STW/Creative
                 "activeUntil": "9999-01-01T00:00:00.000Z"
-            },
+            });
+
+            states.push({
+                validFrom: eventStartDate,
+                activeEvents: activeEvents.slice(),
+                state: stateTemplate
+            });
+
+            states[1].activeEvents.push(
+            {
+                "eventType": "NN0", // Starts Event
+                "activeSince": eventStartDate,
+                "activeUntil": "9999-01-01T00:00:00.000Z"
+            });
+
+            states.push({
+                validFrom: eventEndDate,
+                activeEvents: activeEvents.slice(),
+                state: stateTemplate
+            });
+
+            states[2].activeEvents.push(
             {
                 "eventType": "kevin_says_hello", // Disables PLAY Button
                 "activeUntil": "9999-01-01T00:00:00.000Z"
             },
             {
-                "eventType": "EventFlag.LobbySeason10_1", // Loads Event Lobby
+                "eventType": "survey_stw_ray_switch", // Disables STW/Creative
                 "activeUntil": "9999-01-01T00:00:00.000Z"
             },
             {
-                "eventType": "survey_br_nick_001", // Starts Event
-                "activeUntil": "9999-01-01T00:00:00.000Z"
+                "eventType": "survey_br_nick_001", // Starts Lobby Event
+                "activeSince": eventEndDate,
+                "activeUntil": "9999-01-01T00:00:00.000Z" // Pretty sure it's impossible to change how frequent the numbers are. Unless you change the kismet bytecode ofc.
             });
         }
     }
